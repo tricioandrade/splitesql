@@ -2,7 +2,7 @@
 
 
 namespace App\Model\SpliteSQL;
-use PDO;
+use PDOException;
 
 abstract class Connection
 {
@@ -35,19 +35,14 @@ abstract class Connection
 
     #Start Connection
     public static function connect(){
-        if (!empty(self::getDatabase()) && !empty(self::getHost()) && !empty(self::getUser())):
-            try {
-                self::$sql = new PDO("mysql:host=" . self::getHost() . ";dbname=" . self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword());
+       
+        try {
+                self::$sql = new \PDO("mysql:host=" . self::getHost() . ";dbname=" . self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword());
                 self::$sql->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
                 return self::$sql;
             }
-            catch (\PDOException $exception){
-                echo "<script>alert('Connection Error: ".$exception->getMessage()."');</script>";
-                die();
+            catch (PDOException $e){
+                echo $e->getMessage();
             }
-
-        else:
-            echo "<script>alert('There is an empty param');</script>";
-        endif;
     }
 }

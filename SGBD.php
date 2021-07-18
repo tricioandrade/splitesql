@@ -31,7 +31,7 @@ class SGBD extends Connection
         self::setCharset($charset);
         self::setDatabase($database);
         self::setPassword($password);
-        SGBD::connect();
+        self::connect();
     }
 
     #Set Query Result
@@ -82,6 +82,9 @@ class SGBD extends Connection
         endif;
     }
 
+    public static function create_table(){
+
+    }
     #count_method
     public static function sql_count_by_1_row($table, $row1, $value){
         return SQLselect::SELECT("$row1", "$table", "$row1", "$value", SQLcount::count);
@@ -109,7 +112,7 @@ class SGBD extends Connection
     
     /*all by one Reference*/
     public static function select_all_by_row_where_value(string $table, string $row, string $ref){
-        if(SQLcount::count_1_row("{$table}", "{$row}", "{$ref}")):
+        if(SQLcount::count_by_1_row("{$table}", "{$row}", "{$ref}")):
             self::get_bool_state(true);
             return SQLselect::SELECT_ALL_WHERE("$table", "$row", "$ref", SQLconsts::fetch);
         else:
