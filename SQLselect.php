@@ -17,18 +17,26 @@ class SQLselect extends SQLconsts
             self::$stmt = Connection::connect()->prepare(self::$sql);
             self::$stmt->execute();
             switch($return):
-                case self::count: return self::$stmt->rowCount(); break;
+                case self::count: 
+                     self::setReturn(self::$stmt->rowCount()); 
+                     break;
                 case self::fetch:
-                    self::$Return = self::$stmt->fetchAll(\PDO::FETCH_OBJ);
-                    return self::$Return;
+                     self::setReturn(self::$stmt->fetchAll(\PDO::FETCH_OBJ));;
                     break;
             endswitch;
+            return self::getReturn();
         }
-        catch (\PDOException $exception) {
-            return $exception->getMessage();
+        catch (\Throwable $exception) {
+             echo $exception->getMessage();
         }
     }
 
+    private static function setReturn($return){
+        self::$Return = $return;
+    }
+    private static function getReturn(){
+        return self::$Return;
+    }
     #SELECT_ALL_WHERE_LIKE
     public static function SELECT_ALL_WHERE_LIKE(string $TABLE, string $ROW, string $LIKE,  string $return){
         self::$sql = "SELECT * FROM $TABLE WHERE $ROW LIKE '$LIKE%'";
@@ -111,8 +119,6 @@ class SQLselect extends SQLconsts
         self::$sql = "SELECT $ref1, $ref2 FROM $FROM WHERE $WHERE = '$EQUAL1' AND $AND = '$EQUAL2'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
-        self::$stmt->execute();
-
         return self::SplitValues($return);
     }
 
@@ -129,15 +135,12 @@ class SQLselect extends SQLconsts
         self::$sql = "SELECT $ref1 FROM $FROM WHERE $WHERE = '$EQUAL1' AND $AND = '$EQUAL2'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
-        self::$stmt->execute();
-
         return self::SplitValues($return);
     }
 
     public static function SELECT_ALL(string $FROM, string $return){
         self::$sql = "SELECT * FROM $FROM";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
@@ -145,7 +148,6 @@ class SQLselect extends SQLconsts
     public static function SELECT_ALL_ORDER_DESC(string $table, string $row, string $return){
         self::$sql = "SELECT * FROM $table ORDER BY $row DESC";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
@@ -154,7 +156,6 @@ class SQLselect extends SQLconsts
     public static function SELECT_ALL_ORDER_DESC_LIMIT(string $table, string $row, string $limit, string $return){
         self::$sql = "SELECT * FROM $table ORDER BY $row DESC LIMIT $limit";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
@@ -162,7 +163,6 @@ class SQLselect extends SQLconsts
     public static function SELECT_ALL_ORDER_ASC(string $table, string $row, string $return){
         self::$sql = "SELECT * FROM $table ORDER BY $row ASC";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
@@ -170,7 +170,6 @@ class SQLselect extends SQLconsts
     public static function SELECT_ALL_ORDER_ASC_WHERE(string $table, $row_ref, string $equal, string $order_row, string $return){
         self::$sql = "SELECT * FROM $table WHERE $row_ref = '$equal' ORDER BY $order_row ASC";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
@@ -178,7 +177,6 @@ class SQLselect extends SQLconsts
     public static function SELECT_ALL_ORDER_DESC_WHERE(string $table, string $ref, string $ref1, string $row, string $return){
         self::$sql = "SELECT * FROM {$table} WHERE {$ref} = {$ref1} ORDER BY {$row} DESC";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
@@ -186,15 +184,12 @@ class SQLselect extends SQLconsts
     public static function SELECT_ALL_ORDER_DESC_WHERE_LIMIT(string $table, string $WHERE, string $Equal, string $row, string $limit, string $return){
         self::$sql = "SELECT * FROM $table WHERE $WHERE = $Equal ORDER BY $row DESC LIMIT $limit";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
 
         return self::SplitValues($return);
     }
     public static function SELECT(string $ref, string $FROM, string $WHERE, string $EQUAL, string $return){
         self::$sql = "SELECT $ref FROM $FROM WHERE $WHERE = '$EQUAL'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        self::$stmt->execute();
-
         return self::SplitValues($return);
     }
 

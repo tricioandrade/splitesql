@@ -2,6 +2,7 @@
 
 
 namespace App\Model\SpliteSQL;
+use PDO;
 use PDOException;
 
 abstract class Connection
@@ -9,8 +10,6 @@ abstract class Connection
     /***
      * @param Connection $Proprietie
      */
-
-    #Connection Propriete
 
     protected static $host;
     protected static $user;
@@ -33,16 +32,24 @@ abstract class Connection
     private static function getPassword(){ return self::$password;  }
     private static function getCharset(){  return self::$charset;   }
 
-    #Start Connection
+    /**
+     * @return \PDO
+     */
     public static function connect(){
-       
         try {
-                self::$sql = new \PDO("mysql:host=" . self::getHost() . ";dbname=" . self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword());
-                self::$sql->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
-                return self::$sql;
-            }
-            catch (PDOException $e){
-                echo $e->getMessage();
-            }
+            self::$sql = new \PDO("mysql:host=" . self::getHost() . ";dbname=" .self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword(), [
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                PDO::ATTR_EMULATE_PREPARES => false
+            ]);
+            self::$sql->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+            self::$sql->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            self::$sql->setAttribute(\PDO::PARAM_STR_CHAR, 'UTF8');
+
+            return self::$sql;
+        }
+        catch (PDOException $e){
+            echo $e->getMessage();
+            die();
+        }
     }
 }

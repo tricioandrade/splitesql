@@ -590,7 +590,33 @@ class SGBD extends Connection
         endif;
     }
 
-
+    #JOINs
+    public static function join_tables_2(string $table1, string $row1, string $table2, string $row2, string $row3, string $row4){
+        if(SQLcount::rowCount("$table1") && SQLcount::rowCount("$table2")):
+            self::setQuery(SQLjoin::JOIN_TABLES_2($table1, $row1, $table2, $row2, $row3,  $row4, SQLconsts::fetch));
+            if (self::getQuery()):
+                self::get_bool_state(true);
+                return self::getQuery();
+            else:
+                self::get_bool_state(false);
+            endif;
+        else:
+            self::get_bool_state(false);
+        endif;
+    }
+    public static function join_tables_3(string $table1, string $row1, string $table2, string $row2, string $table3, string $row3, string $rowref1, string $rowref2){
+        if(SQLcount::rowCount("$table1") && SQLcount::rowCount("$table2") && SQLcount::rowCount("$table3")):
+            self::setQuery(SQLjoin::JOIN_TABLES_3($table1, $row1, $table2, $row2, $table3, $row3, $rowref1,  $rowref2, SQLconsts::fetch));
+            if (self::getQuery()):
+                self::get_bool_state(true);
+                return self::getQuery();
+            else:
+                self::get_bool_state(false);
+            endif;
+        else:
+            self::get_bool_state(false);
+        endif;
+    }
     #delete
     #get x,y boolean values and Verify drop
     private static function drop_result(int $first, int $second){
