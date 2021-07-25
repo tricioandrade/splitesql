@@ -10,9 +10,6 @@
 
 namespace App\Model\SpliteSQL;
 
-use App\Model\SpliteSQL\Connection;
-use App\Model\SpliteSQL\SGBD;
-
 class  Query extends SGBD
 {
 
@@ -34,45 +31,7 @@ class  Query extends SGBD
     private static $rows;
     private static $values;
     private static $table;
-
-    private static $check_query_result = false;
-
-    /**
-     * _Query constructor.
-     * @param string $host
-     * @param string $database
-     * @param string $user
-     * @param string|null $password
-     * @param string|null $charset
-     */
-
-    /*
-     * @encode array to Json
-     * @return json array
-     */
-    private static function encode_json(array $array){
-        $array = str_replace('\\',' ',json_encode($array, JSON_UNESCAPED_UNICODE));
-        $array = str_replace('  ', '/', $array);
-        $array = str_replace(' /', '/', $array);
-        return $array;
-    }
-
-    /**
-     * @param array $rows
-     */
-    private static function setRows( $rows): void {
-        if (is_object($rows)) $rows = get_object_vars($rows);
-        self::$rows = str_replace(['[',']', '{','}', '"' ,'"'],  '', self::encode_json(array_keys($rows)));
-    }
-
-    /**
-     * @param array $values
-     */
-    private static function setValues( $values): void {
-        if (is_object($values)) $values = get_object_vars($values);
-        self::$values = str_replace('"', '\'' , str_replace(['[',']', '{','}'],  '', self::encode_json(array_values($values))));
-    }
-
+    
     /**
      * @return mixed
      */
@@ -101,15 +60,34 @@ class  Query extends SGBD
         self::$check_query_result = $state;
     }
 
-    /**
-     * @Model static function
-     * @param string $ddl
-     * @param array $rows
-     * @param array $values
-     * @param string|null $table
-     * @param string|null $return
-     * @return array|bool|int
+    private static $check_query_result = false;
+
+    /*
+     * @encode array to Json
+     * @return json array
      */
+    private static function encode_json(array $array){
+        $array = str_replace('\\',' ',json_encode($array, JSON_UNESCAPED_UNICODE));
+        $array = str_replace('  ', '/', $array);
+        $array = str_replace(' /', '/', $array);
+        return $array;
+    }
+
+    /**
+     * @param array $rows
+     */
+    private static function setRows( $rows): void {
+        if (is_object($rows)) $rows = get_object_vars($rows);
+        self::$rows = str_replace(['[',']', '{','}', '"' ,'"'],  '', self::encode_json(array_keys($rows)));
+    }
+
+    /**
+     * @param array $values
+     */
+    private static function setValues( $values): void {
+        if (is_object($values)) $values = get_object_vars($values);
+        self::$values = str_replace('"', '\'' , str_replace(['[',']', '{','}'],  '', self::encode_json(array_values($values))));
+    }
 
     public static function sql_select(){
 
@@ -125,20 +103,35 @@ class  Query extends SGBD
         endif;
     }
 
+  
+    /**
+     * @Model static function
+     * @param string $ddl
+     * @param array $rows
+     * @param array $values
+     * @param string|null $table
+     * @param string|null $return
+     * @return array|bool|int
+     */
+
     public static function SplitSQL(string $SQL, string $table = null, string $return = null){
         self::$sql = $SQL;
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
-            if (false !== stripos($SQL, self::create)) return true;
-            if (false !== stripos($SQL, self::update)) return true;
-            if (false !== stripos($SQL, self::delete)) return true;
+            if (false !== stripos($SQL, self::create)) self::setQueryResult(true);
+            if (false !== stripos($SQL, self::update)) self::setQueryResult(true);
+            if (false !== stripos($SQL, self::delete)) self::setQueryResult(true);
             if (false !== stripos($SQL, self::select)):
                 if ($return == self::fetch || $return == null):
+                    self::setQueryResult(true);
                     return self::$stmt->fetchAll(\PDO::FETCH_OBJ);
                 elseif ($return == self::count):
+                    self::setQueryResult(true);
                     return self::$stmt->rowCount();
                 endif;
             endif;
+        else:
+            self::setQueryResult(false);    
         endif;
     }
 }
