@@ -8,7 +8,7 @@
  * @class Query
  */
 
-namespace App\Model\SpliteSQL;
+namespace app\model\splitesql;
 
 class  Query extends SGBD
 {

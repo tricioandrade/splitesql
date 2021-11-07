@@ -1,10 +1,9 @@
 <?php
 
+namespace app\model\splitesql;
 
-namespace App\Model\SpliteSQL;
 
-
-class SQLselect extends SQLconsts
+class SQLselect extends consts
 {
     protected static $stmt;
     protected static $sql;

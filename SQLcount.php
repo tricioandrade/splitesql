@@ -1,7 +1,6 @@
 <?php
 
-
-namespace App\Model\SpliteSQL;
+namespace app\model\splitesql;
 
 
 class SQLcount extends SQLselect

@@ -1,7 +1,6 @@
 <?php
 
-
-namespace App\Model\SpliteSQL;
+namespace app\model\splitesql;
 
 class SQLjoin extends SQLselect
 {
