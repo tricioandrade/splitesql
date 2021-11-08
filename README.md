@@ -1,2 +1,2 @@
 # SpliteSQL
- API para Requisições SQL
+ API SQL
