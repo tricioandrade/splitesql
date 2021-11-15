@@ -1,9 +1,9 @@
 <?php
 
 
-namespace app\model\splitesql;
+namespace app\model\splitesql; 
 
-class SGBD extends Connection implements consts
+class SGBD extends Connection
 {
     /***
      * @author Patricio Bento Andrade

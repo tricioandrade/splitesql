@@ -5,7 +5,7 @@ namespace app\model\splitesql;
 use PDO;
 use PDOException;
 
-abstract class Connection
+abstract class Connection extends consts
 {
     /***
      * @param Connection $Proprietie
@@ -33,11 +33,11 @@ abstract class Connection
     private static function getCharset(){  return self::$charset;   }
 
     /**
-     * @return \PDO
+     * @return PDO
      */
     public static function connect(){
         try {
-            self::$sql = new \PDO("mysql:host=" . self::getHost() . ";dbname=" .self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword(), [
+            self::$sql = new  PDO("mysql:host=" . self::getHost() . ";dbname=" .self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword(), [
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
                 PDO::ATTR_EMULATE_PREPARES => false
             ]);
@@ -48,8 +48,7 @@ abstract class Connection
             return self::$sql;
         }
         catch (PDOException $e){
-            echo $e->getMessage();
-            die();
+            return $e->getMessage();
         }
     }
 }
