@@ -1,2 +1,2 @@
 # SpliteSQL
- API SQL
+Lib for Database mannagement
