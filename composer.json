@@ -1,8 +1,9 @@
 {
     "name": "tricioandrade/splitesql",
-    "description": "Lib for Database mannagement",
-    "type": "project",
-    "license": "proprietary",
+    "description": "Database mannagement",
+	"keywords":["sql","database","query"],
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Patricio Andrade",
@@ -14,5 +15,11 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.4"
+    },
+  
+    "autoload": {
+        "psr-4": {
+            "splitesql": "src"
+        }
     }
 }
