@@ -177,7 +177,7 @@ class  Query extends SGBD
         return $array;
     }
 
-    public static function sql_insert(string $table, $param){
+    public static function sql_insert($table, $param){
         self::setRows($param); self::setValues($param);
         self::$sql = consts::insert." into {$table} (".self::getRows().") values (".self::getValues().")";
 
