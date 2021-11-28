@@ -11,7 +11,7 @@ abstract class consts
     const create = 'CREATE';
     const update = 'UPDATE';
     const delete = 'DELETE';
-    const select = 'SELECT';
+    const select = 'select';
     const insert = 'insert';
     const where = 'WHERE';
     const set = 'SET';

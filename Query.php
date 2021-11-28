@@ -218,7 +218,6 @@ class  Query extends SGBD
 
     public static function sql_query(string $SQL, string $return = null){
         self::$sql = $SQL;
-        print_r($SQL);
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             if (false !== stripos($SQL, consts::create)) self::setQueryResult(true);
