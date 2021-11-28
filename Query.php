@@ -18,11 +18,12 @@ class  Query extends SGBD
 
     private static $rows;
     private static $values;
-    
+
     private static $objectVars;
     private static $array_keys;
     private static $array_values;
     private static $select_values;
+    private static $array_to_filter;
     private static $select_data_for_query;
     private static $check_query_result = false;
     
@@ -37,21 +38,21 @@ class  Query extends SGBD
     /**
      * @return mixed
      */
-    public static function getRows(){
+    private static function getRows(){
         return self::$rows;
     }
 
     /**
      * @return mixed
      */
-    public static function getValues(){
+    private static function getValues(){
         return self::$values;
     }
 
     /**
      * @param array $rows
      */
-    public static function setRows( $rows): void {
+    private static function setRows( $rows): void {
         self::setObjectToGetArray($rows);
         self::$rows = str_replace(['[',']', '{','}', '"' ,'"'],  '', self::encode_json(array_keys(self::getObjectConvertedToArray())));
     }
@@ -59,7 +60,7 @@ class  Query extends SGBD
     /**
      * @param array $values
      */
-    public static function setValues( $values): void {
+    private static function setValues( $values): void {
         self::setObjectToGetArray($values);
         self::$values = str_replace('"', '\'' , str_replace(['[',']', '{','}'],  '', self::encode_json(array_values(self::getObjectConvertedToArray()))));
     }
@@ -88,7 +89,7 @@ class  Query extends SGBD
      * @param array to get Keys 
      */
 
-    public static function setArrayToGetKeys(array $array){
+    private static function setArrayToGetKeys(array $array){
         self::$array_keys = array_keys($array);
     }
     
@@ -97,7 +98,7 @@ class  Query extends SGBD
      * @param array $values  
      * @return array_keys
      */
-    public function getArrayKeys(){
+    public static function getArrayKeys(){
         return self::$array_keys;
     }
 
@@ -133,12 +134,12 @@ class  Query extends SGBD
      * @method
      * @param $select values
      */
-    public static function setSelectQueryValues($values){
+    private static function setSelectQueryValues($values){
             self::setObjectToGetArray($values);
 
             $_data = self::getObjectConvertedToArray();
-            self::setArrayToGetKeys($_data);
-            self::setArrayToGetValues($_data);
+            self::setArrayToGetKeys((array)$_data);
+            self::setArrayToGetValues((array)$_data);
             $_keys = self::getArrayKeys();
             $_values = self::getArrayValues();
             
@@ -170,24 +171,44 @@ class  Query extends SGBD
      * @encode array to Json
      * @return json array
      */
-    public static function encode_json(array $array){
+    private static function encode_json(array $array){
         $array = str_replace('\\',' ',json_encode($array, JSON_UNESCAPED_UNICODE));
         $array = str_replace('  ', '/', $array);
         $array = str_replace(' /', '/', $array);
         return $array;
     }
 
+    /**
+     * @param $table
+     * @param $param
+     */
     public static function sql_insert($table, $param){
         self::setRows($param); self::setValues($param);
         self::$sql = consts::insert." into {$table} (".self::getRows().") values (".self::getValues().")";
-
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             self::setQueryResult(true);
         endif;
     }
 
-  
+    /**
+     * @param mixed $array_to_filter
+     */
+    public static function setArrayToFilter($array_to_filter): void{
+        self::setArrayToGetKeys($array_to_filter);
+        $array_keys = self::getArrayKeys();
+        for($i=0; $i < count($array_to_filter); $i++):
+            self::$array_to_filter[$array_keys[$i]] = filter_var($array_to_filter[$array_keys[$i]], FILTER_SANITIZE_STRING);
+        endfor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getArrayToFilter(){
+        return self::$array_to_filter;
+    }
+
     /**
      * @Model static function
      * @param string $SQL
@@ -219,7 +240,7 @@ class  Query extends SGBD
 
     /**
      * 
-     * @return Query
+     * @return array|bool|int
      */
     public static function sql_select(string $row, string $table, $values, string $in_where_condictions = '', string $after_where_condictions = '')
     {
