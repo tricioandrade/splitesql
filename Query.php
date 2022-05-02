@@ -2,13 +2,13 @@
 
 /***
  * @author Patricio Bento Andrade
- * @copyright tricioandrde - Patrício Andrade All Rights Reserved
+ * @copyright tricioandrade - Patrício Andrade All Rights Reserved
  * @license  Propriety
  * @since 2020
  * @class Query
  */
 
-namespace app\model\splitesql; 
+namespace App\Models\splitesql;
 
 class  Query extends SGBD
 {
@@ -26,6 +26,15 @@ class  Query extends SGBD
     private static $array_to_filter;
     private static $select_data_for_query;
     private static $check_query_result = false;
+
+    private static $Query;
+
+    private static $queryConsts = [
+        consts::create,
+        consts::update,
+        consts::select,
+        consts::delete
+    ];
     
     /**
      * @return bool
@@ -34,6 +43,19 @@ class  Query extends SGBD
         return self::$check_query_result;
     }
 
+    /**
+     * @param mixed $Query
+     */
+    private static function setQuery($Query): void {
+        self::$Query = $Query;
+    }
+
+    /**
+     * @return mixed
+     */
+    private static function getQuery(){
+        return self::$Query;
+    }
 
     /**
      * @return mixed
@@ -121,12 +143,11 @@ class  Query extends SGBD
         return self::$array_values;
     }
 
-    public static function setSelectValues($values){
+    public static function setValuesAndCleanIt($values){
         self::$select_values = str_replace('$', '\'' , str_replace(['[',']', '\'' ,'{','}'],  '', self::encode_json(array_values($values))));
     }
 
-    public static function getSelectValues(): string
-    {
+    public static function getValuesCleaned(): string{
         return self::$select_values;   
     }
 
@@ -138,8 +159,8 @@ class  Query extends SGBD
             self::setObjectToGetArray($values);
 
             $_data = self::getObjectConvertedToArray();
-            self::setArrayToGetKeys((array)$_data);
-            self::setArrayToGetValues((array)$_data);
+                self::setArrayToGetKeys((array)$_data);
+                self::setArrayToGetValues((array)$_data);
             $_keys = self::getArrayKeys();
             $_values = self::getArrayValues();
             
@@ -148,8 +169,8 @@ class  Query extends SGBD
                 $new[$i] = $_keys[$i] . "=\$" . $_values[$i] ."\$";
             endfor;
 
-            self::setSelectValues($new);
-            self::$select_data_for_query =  self::getSelectValues(); 
+            self::setValuesAndCleanIt($new);
+            self::$select_data_for_query =  self::getValuesCleaned();
     }
 
     /**
@@ -195,6 +216,7 @@ class  Query extends SGBD
      * @param mixed $array_to_filter
      */
     public static function setArrayToFilter($array_to_filter): void{
+        if (is_object($array_to_filter)) $array_to_filter = self::setObjectToGetArray($array_to_filter);
         self::setArrayToGetKeys($array_to_filter);
         $array_keys = self::getArrayKeys();
         for($i=0; $i < count($array_to_filter); $i++):
@@ -212,40 +234,41 @@ class  Query extends SGBD
     /**
      * @Model static function
      * @param string $SQL
-     * @param string|null $return
+     * @param string|null $type_of_return
      * @return array|bool|int|null
      */
 
-    public static function sql_query(string $SQL, string $return = null){
+    public static function sql_query(string $SQL, string $type_of_return = null){
         self::$sql = $SQL;
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
-            if (false !== stripos($SQL, consts::create)) self::setQueryResult(true);
-            if (false !== stripos($SQL, consts::update)) self::setQueryResult(true);
-            if (false !== stripos($SQL, consts::delete)) self::setQueryResult(true);
+            for ($i = 0; $i < count(self::$queryConsts); $i++)
+                false !== stripos($SQL, self::$queryConsts[$i] ) ? self::setQueryResult(true) : self::setQueryResult(false);
             if (false !== stripos($SQL, consts::select)):
-                if ($return == consts::fetch || $return == null):
+                if ($type_of_return == consts::fetch || $type_of_return == null):
                     self::setQueryResult(true);
-                    return self::$stmt->fetchAll(\PDO::FETCH_OBJ);
-                elseif ($return == consts::count):
+                    self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
+                elseif ($type_of_return == consts::count):
                     self::setQueryResult(true);
-                    return self::$stmt->rowCount();
+                    self::setQuery(self::$stmt->rowCount());
                 endif;
             endif;
         else:
             self::setQueryResult(false);    
         endif;
+
+        return self::getQuery();
     }
 
     /**
      * 
      * @return array|bool|int
      */
-    public static function sql_select(string $row, string $table, $values, string $in_where_condictions = '', string $after_where_condictions = '')
+    public static function sql_select(string $rows_to_select, string $table, $values, string $in_where_condictions = '', string $after_where_condictions = '')
     {
         self::setSelectQueryValues($values);
         $where = str_replace(',', " ${in_where_condictions} ", self::getSelectQueryValues());
         $where = str_replace('"', '', $where);
-        return self::sql_query(consts::select." ${row} from `${table}` where ${where} ${after_where_condictions};");
+        return self::sql_query(consts::select." ${$rows_to_select} from `${table}` where ${where} ${after_where_condictions};");
     }
 }
