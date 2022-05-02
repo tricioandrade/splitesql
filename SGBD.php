@@ -1,13 +1,13 @@
 <?php
 
 
-namespace app\model\splitesql; 
+namespace App\Models\splitesql;
 
 class SGBD extends Connection
 {
     /***
-     * @author Patricio Bento Andrade
-     * @copyright tricioandarade - Patrício Andrade All Rights Reserved
+     * @author Patricio Andrade
+     * @copyright tricioandrade - Patrício Andrade All Rights Reserved
      * @license  MIT
      * @since 2020
      * @class SGBD START
@@ -88,7 +88,7 @@ class SGBD extends Connection
     public static function sql_count_by_1_row($table, $row1, $value){
         return SQLselect::SELECT("$row1", "$table", "$row1", "$value", SQLcount::count);
     }
-    
+
     #select
     /*one*/
     public static function select_one_row(string $row, string $table){
@@ -108,7 +108,7 @@ class SGBD extends Connection
             self::get_bool_state(false);
         endif;
     }
-    
+
     /*all by one Reference*/
     public static function select_all_by_row_where_value(string $table, string $row, string $ref){
         if(SQLcount::count_by_1_row("{$table}", "{$row}", "{$ref}")):
@@ -118,7 +118,7 @@ class SGBD extends Connection
             self::get_bool_state(false);
         endif;
     }
-    
+
     /*all select order by asc */
     public static function select_all_asc(string $table, string $row){
         if(SQLcount::rowCount("$table")):
@@ -175,7 +175,7 @@ class SGBD extends Connection
             self::get_bool_state(false);
         endif;
     }
-   
+
     /*one select where limit */
     public static function select_one_where_limit(string $row, string $table, string $where, string $equal, string $limit){
         if(SQLcount::rowCount("$table")):
