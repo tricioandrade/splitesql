@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\model\splitesql;
+namespace App\Models\splitesql;
 use PDO;
 use PDOException;
 
@@ -16,7 +16,7 @@ abstract class Connection extends consts
     protected static $charset;
     protected static $database;
     protected static $password;
-    private static $sql;
+    private static $connection;
 
     /**@param Setters $database*/
     protected static function setDatabase(string $database){   self::$database = $database;}
@@ -37,18 +37,18 @@ abstract class Connection extends consts
      */
     public static function connect(){
         try {
-            self::$sql = new  PDO("mysql:host=" . self::getHost() . ";dbname=" .self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword(), [
+            self::$connection = new  PDO("mysql:host=" . self::getHost() . ";dbname=" .self::getDatabase(). ";charset=".self::getCharset().";", self::getUser(), self::getPassword(), [
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
                 PDO::ATTR_EMULATE_PREPARES => false
             ]);
-            self::$sql->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
-            self::$sql->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-            self::$sql->setAttribute(\PDO::PARAM_STR_CHAR, 'UTF8');
-
-            return self::$sql;
+            self::$connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+            self::$connection->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            self::$connection->setAttribute(\PDO::PARAM_STR_CHAR, 'UTF8');
         }
         catch (PDOException $e){
-            return $e->getMessage();
+            self::$connection = $e;
         }
+
+        return self::$connection;
     }
 }
