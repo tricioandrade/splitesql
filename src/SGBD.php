@@ -6,8 +6,8 @@ namespace App\Models\splitesql;
 class SGBD extends Connection
 {
     /***
-     * @author Patricio Andrade
-     * @copyright tricioandrade - Patrício Andrade All Rights Reserved
+     * @author Patricio Bento Andrade
+     * @copyright tricioandarade - Patrício Andrade All Rights Reserved
      * @license  MIT
      * @since 2020
      * @class SGBD START

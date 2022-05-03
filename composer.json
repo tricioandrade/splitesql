@@ -2,7 +2,6 @@
     "name": "tricioandrade/splitesql",
     "description": "Query Builder",
     "type": "library",
-	"keywords":["sql","database","query"],
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -11,14 +10,10 @@
     },
     "authors": [
         {
-            "name": "Patricio Andrade",
-            "email": "tricioandrad@gmail.com",
-            "role":  "Developer",
-            "homepage": "https://github.com/tricioandrade/splitesql"
+            "name": "tricioandrade",
+            "email": "tricioandrade@outlook.com"
         }
     ],
     "minimum-stability": "dev",
-     "require": {
-        "php": ">=7.4"
-    },
+    "require": {}
 }

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\model\splitesql;
+namespace App\Models\splitesql;
 
 
 abstract class consts
