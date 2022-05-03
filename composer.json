@@ -1,9 +1,14 @@
 {
     "name": "tricioandrade/splitesql",
-    "description": "Database mannagement",
-	"keywords":["sql","database","query"],
+    "description": "Query Builder",
     "type": "library",
+	"keywords":["sql","database","query"],
     "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Tricioandrade\\Splitesql\\": "src/"
+        }
+    },
     "authors": [
         {
             "name": "Patricio Andrade",
@@ -13,13 +18,7 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {
+     "require": {
         "php": ">=7.4"
     },
-  
-    "autoload": {
-        "psr-4": {
-            "app\\": "app/"
-        }
-    }
 }
