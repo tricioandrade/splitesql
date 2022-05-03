@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\splitesql;
+namespace Tricioandrade\Splitesql;
 
 
 class SQLselect extends consts

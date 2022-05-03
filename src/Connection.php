@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\splitesql;
+namespace Tricioandrade\Splitesql;
 use PDO;
 use PDOException;
 
