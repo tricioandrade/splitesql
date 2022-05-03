@@ -2,7 +2,7 @@
 
 /***
  * @author Patricio Bento Andrade
- * @copyright tricioandrde - Patrício Andrade All Rights Reserved
+ * @copyright tricioandrade - Patrício Andrade All Rights Reserved
  * @license  Propriety
  * @since 2020
  * @class Query
