@@ -1,9 +1,9 @@
 <?php
 
 /***
- * @author Patricio Bento Andrade
+ * @author github.com/tricioandrade
  * @copyright tricioandrade - Patrício Andrade All Rights Reserved
- * @license  Propriety
+ * @license  MIT
  * @since 2020
  * @class Query
  */
