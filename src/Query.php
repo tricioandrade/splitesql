@@ -156,17 +156,13 @@ class  Query extends SGBD
      * @param $select values
      */
     private static function setSelectQueryValues($values){
-            self::setObjectToGetArray($values);
-
-            $_data = self::getObjectConvertedToArray();
-                self::setArrayToGetKeys((array)$_data);
-                self::setArrayToGetValues((array)$_data);
-            $_keys = self::getArrayKeys();
-            $_values = self::getArrayValues();
-            
             $new = [];
-            for($i = 0; $i < count($_keys); $i++):
-                $new[$i] = $_keys[$i] . "=\$" . $_values[$i] ."\$";
+            self::setObjectToGetArray($values);
+            self::setArrayToGetKeys((array)self::getObjectConvertedToArray());
+            self::setArrayToGetValues((array)self::getObjectConvertedToArray());
+            
+            for($i = 0; $i < count(self::getArrayKeys()); $i++):
+                $new[$i] = self::getArrayKeys()[$i] . "=\$" . self::getArrayValues()[$i] ."\$";
             endfor;
 
             self::setValuesAndCleanIt($new);
@@ -184,7 +180,7 @@ class  Query extends SGBD
     /**
      * @param bool $state
      */
-    private static function setQueryResult(bool $state){
+    private static function setQueryResultState(bool $state){
         self::$check_query_result = $state;
     }
 
@@ -208,7 +204,7 @@ class  Query extends SGBD
         self::$sql = consts::insert." into {$table} (".self::getRows().") values (".self::getValues().")";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
-            self::setQueryResult(true);
+            self::setQueryResultState(true);
         endif;
     }
 
@@ -238,23 +234,22 @@ class  Query extends SGBD
      * @return array|bool|int|null
      */
 
-    public static function sql_query(string $SQL, string $type_of_return = null){
+    public static function sql_query(string $SQL, string $type_of_return = consts::fetch){
         self::$sql = $SQL;
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             for ($i = 0; $i < count(self::$queryConsts); $i++)
-                false !== stripos($SQL, self::$queryConsts[$i] ) ? self::setQueryResult(true) : self::setQueryResult(false);
+                false !== stripos($SQL, self::$queryConsts[$i] ) ?? self::setQueryResultState(true);
             if (false !== stripos($SQL, consts::select)):
-                if ($type_of_return == consts::fetch || $type_of_return == null):
-                    self::setQueryResult(true);
-                    self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
-                elseif ($type_of_return == consts::count):
-                    self::setQueryResult(true);
-                    self::setQuery(self::$stmt->rowCount());
-                endif;
+                switch($type_of_return):
+                    case consts::fetch: self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ)); break;
+                    case consts::count: self::setQuery(self::$stmt->rowCount()); break;
+                    default:
+                        self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
+                endswitch;
             endif;
         else:
-            self::setQueryResult(false);    
+            self::setQueryResultState(false);    
         endif;
 
         return self::getQuery();
