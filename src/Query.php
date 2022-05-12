@@ -120,7 +120,7 @@ class  Query extends SGBD
      * @param array $values  
      * @return array_keys
      */
-    public static function getArrayKeys(){
+    public static function getArrayKeys(): array{
         return self::$array_keys;
     }
 
@@ -156,11 +156,11 @@ class  Query extends SGBD
      * @param $select values
      */
     private static function setSelectQueryValues($values){
-            $new = [];
+            $new = array();
             self::setObjectToGetArray($values);
             self::setArrayToGetKeys((array)self::getObjectConvertedToArray());
             self::setArrayToGetValues((array)self::getObjectConvertedToArray());
-            
+
             for($i = 0; $i < count(self::getArrayKeys()); $i++):
                 $new[$i] = self::getArrayKeys()[$i] . "=\$" . self::getArrayValues()[$i] ."\$";
             endfor;
@@ -238,8 +238,9 @@ class  Query extends SGBD
         self::$sql = $SQL;
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
-            for ($i = 0; $i < count(self::$queryConsts); $i++)
-                false !== stripos($SQL, self::$queryConsts[$i] ) ?? self::setQueryResultState(true);
+            for ($i = 0; $i < count(self::$queryConsts); $i++):
+                if(false !== stripos($SQL, self::$queryConsts[$i])) self::setQueryResultState(true);
+            endfor;
             if (false !== stripos($SQL, consts::select)):
                 switch($type_of_return):
                     case consts::fetch: self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ)); break;
