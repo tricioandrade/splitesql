@@ -133,6 +133,21 @@ class SGBD extends Connection
             self::get_bool_state(false);
         endif;
     }
+
+    /*all select order by asc limit*/
+    public static function select_all_asc_limit(string $table, string $row, int $limit){
+        if(SQLcount::rowCount("$table")):
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC_LIMIT("$table","$row",   $limit, consts::fetch));
+            if (self::getQuery()):
+                self::get_bool_state(true);
+                return self::getQuery();
+            else:
+                self::get_bool_state(false);
+            endif;
+        else:
+            self::get_bool_state(false);
+        endif;
+    }
     /*all select order by desc */
     public static function select_all_desc_limit(string $table, string $row, string $limit){
         if(SQLcount::rowCount("$table")):
