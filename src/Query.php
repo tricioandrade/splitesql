@@ -1,10 +1,11 @@
 <?php
 
 /***
- * @author github.com/tricioandrade
- * @copyright tricioandrade - Patrício Andrade All Rights Reserved
+ * @author Patrício Andrade
+ * @user tricioandrade - All Rights Reserved
  * @license  MIT
  * @since 2020
+ * @Github http://github.com/tricioandrade/splitesql
  * @class Query
  */
 
