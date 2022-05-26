@@ -16,7 +16,7 @@ class  Query extends SGBD
     private static $sql;
     private static $stmt;
 
-    private static $rows;
+    private static $columns;
     private static $values;
 
     private static $objectVars;
@@ -60,8 +60,8 @@ class  Query extends SGBD
     /**
      * @return mixed
      */
-    private static function getRows(){
-        return self::$rows;
+    private static function getColumns(){
+        return self::$columns;
     }
 
     /**
@@ -72,11 +72,11 @@ class  Query extends SGBD
     }
 
     /**
-     * @param array $rows
+     * @param array $columns
      */
-    private static function setRows( $rows): void {
-        self::setObjectToGetArray($rows);
-        self::$rows = str_replace(['[',']', '{','}', '"' ,'"'],  '', self::encode_json(array_keys(self::getObjectConvertedToArray())));
+    private static function setColumns( $columns): void {
+        self::setObjectToGetArray($columns);
+        self::$columns = str_replace(['[',']', '{','}', '"' ,'"'],  '', self::encode_json(array_keys(self::getObjectConvertedToArray())));
     }
 
     /**
@@ -117,8 +117,7 @@ class  Query extends SGBD
     
     /**
      * @method
-     * @param array $values  
-     * @return array_keys
+     * @return array
      */
     public static function getArrayKeys(): array{
         return self::$array_keys;
@@ -136,8 +135,7 @@ class  Query extends SGBD
     
     /**
      * @method
-     * @param array $values  
-     * @return array_values
+     * @return array self::array_values
      */
     private static function getArrayValues(){
         return self::$array_values;
@@ -153,7 +151,7 @@ class  Query extends SGBD
 
     /**
      * @method
-     * @param $select values
+     * @param array $select
      */
     private static function setSelectQueryValues($values){
             $new = array();
@@ -200,8 +198,8 @@ class  Query extends SGBD
      * @param $param
      */
     public static function sql_insert($table, $param){
-        self::setRows($param); self::setValues($param);
-        self::$sql = consts::insert." into {$table} (".self::getRows().") values (".self::getValues().")";
+        self::setColumns($param); self::setValues($param);
+        self::$sql = consts::insert." into {$table} (".self::getColumns().") values (".self::getValues().")";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             self::setQueryResultState(true);
@@ -260,11 +258,11 @@ class  Query extends SGBD
      * 
      * @return array|bool|int
      */
-    public static function sql_select(string $rows_to_select, string $table, $values, string $in_where_condictions = '', string $after_where_condictions = '')
+    public static function sql_select(string $columns_to_select, string $table, $values, string $in_where_condictions = '', string $after_where_condictions = '')
     {
         self::setSelectQueryValues($values);
         $where = str_replace(',', " ${in_where_condictions} ", self::getSelectQueryValues());
         $where = str_replace('"', '', $where);
-        return self::sql_query(consts::select." ${$rows_to_select} from `${table}` where ${where} ${after_where_condictions};");
+        return self::sql_query(consts::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
     }
 }

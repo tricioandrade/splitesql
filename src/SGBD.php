@@ -85,16 +85,16 @@ class SGBD extends Connection
 
     }
     #count_method
-    public static function sql_count_by_1_row($table, $row1, $value){
-        return SQLselect::SELECT("$row1", "$table", "$row1", "$value", SQLcount::count);
+    public static function sql_count_by_1_row($table, $column1, $value){
+        return SQLselect::SELECT("$column1", "$table", "$column1", "$value", SQLcount::count);
     }
 
     #select
     /*one*/
-    public static function select_one_row(string $row, string $table){
+    public static function select_one_row(string $column, string $table){
         if(SQLcount::rowCount("$table")):
             self::get_bool_state(true);
-            return SQLselect::SELECT_1_ROW("$row", "$table",consts::fetch);
+            return SQLselect::SELECT_1_ROW("$column", "$table",consts::fetch);
         else:
             self::get_bool_state(false);
         endif;
@@ -110,19 +110,19 @@ class SGBD extends Connection
     }
 
     /*all by one Reference*/
-    public static function select_all_by_row_where_value(string $table, string $row, string $ref){
-        if(SQLcount::count_by_1_row("{$table}", "{$row}", "{$ref}")):
+    public static function select_all_by_row_where_value(string $table, string $column, string $ref){
+        if(SQLcount::count_by_1_row("{$table}", "{$column}", "{$ref}")):
             self::get_bool_state(true);
-            return SQLselect::SELECT_ALL_WHERE("$table", "$row", "$ref", consts::fetch);
+            return SQLselect::SELECT_ALL_WHERE("$table", "$column", "$ref", consts::fetch);
         else:
             self::get_bool_state(false);
         endif;
     }
 
     /*all select order by asc */
-    public static function select_all_asc(string $table, string $row){
+    public static function select_all_asc(string $table, string $column){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC("$table","$row",  consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC("$table","$column",  consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -135,9 +135,9 @@ class SGBD extends Connection
     }
 
     /*all select order by asc limit*/
-    public static function select_all_asc_limit(string $table, string $row, int $limit){
+    public static function select_all_asc_limit(string $table, string $column, int $limit){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC_LIMIT("$table","$row",   $limit, consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC_LIMIT("$table","$column",   $limit, consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -149,9 +149,9 @@ class SGBD extends Connection
         endif;
     }
     /*all select order by desc */
-    public static function select_all_desc_limit(string $table, string $row, string $limit){
+    public static function select_all_desc_limit(string $table, string $column, string $limit){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_ALL_ORDER_DESC_LIMIT("$table","$row",  "$limit",consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_DESC_LIMIT("$table","$column",  "$limit",consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -163,9 +163,9 @@ class SGBD extends Connection
         endif;
     }
     /*all select order by asc Where*/
-    public static function select_all_asc_where(string $table, string $row, string $equal, string $order_by){
+    public static function select_all_asc_where(string $table, string $column, string $equal, string $order_by){
         if(SQLcount::rowCount("{$table}")):
-            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC_WHERE("$table","$row",  "$equal", "$order_by", consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_ASC_WHERE("$table","$column",  "$equal", "$order_by", consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -177,9 +177,9 @@ class SGBD extends Connection
         endif;
     }
     /*all select Where Like*/
-    public static function select_all_where_like(string $table, string $row, string $like){
+    public static function select_all_where_like(string $table, string $column, string $like){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_ALL_WHERE_LIKE("$table","$row",  "$like", consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_WHERE_LIKE("$table","$column",  "$like", consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -192,9 +192,9 @@ class SGBD extends Connection
     }
 
     /*one select where limit */
-    public static function select_one_where_limit(string $row, string $table, string $where, string $equal, string $limit){
+    public static function select_one_where_limit(string $column, string $table, string $where, string $equal, string $limit){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_WHERE_LIMIT("$row", "$table", "$where", "$equal", "$limit", consts::fetch));
+            self::setQuery(SQLselect::SELECT_WHERE_LIMIT("$column", "$table", "$where", "$equal", "$limit", consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -206,9 +206,9 @@ class SGBD extends Connection
         endif;
     }
     /*all select order by desc limit*/
-    public static function select_all_desc_where_limit(string $table, string $row,string $equal, string $order_by, string $limit){
+    public static function select_all_desc_where_limit(string $table, string $column,string $equal, string $order_by, string $limit){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_ALL_ORDER_DESC_WHERE_LIMIT("$table","$row", "$equal", "$order_by", $limit, consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_DESC_WHERE_LIMIT("$table","$column", "$equal", "$order_by", $limit, consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -220,9 +220,9 @@ class SGBD extends Connection
         endif;
     }
     /*all select order by desc limit*/
-    public static function select_all_desc_where(string $table, string $row,string $equal, string $order_by){
+    public static function select_all_desc_where(string $table, string $column,string $equal, string $order_by){
         if(SQLcount::rowCount("$table")):
-            self::setQuery(SQLselect::SELECT_ALL_ORDER_DESC_WHERE("$table","$row", "$equal", "$order_by", consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_ORDER_DESC_WHERE("$table","$column", "$equal", "$order_by", consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -235,9 +235,9 @@ class SGBD extends Connection
     }
 
     /*one*/
-    public static function select_one(string $row, string $table, string $where, string $ref){
+    public static function select_one(string $column, string $table, string $where, string $ref){
         if(SQLcount::count_by_1_row("$table", "$where", "$ref")):
-            self::setQuery(SQLselect::SELECT("$row", "$table","$where", "$ref", consts::fetch)[0]);
+            self::setQuery(SQLselect::SELECT("$column", "$table","$where", "$ref", consts::fetch)[0]);
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -250,9 +250,9 @@ class SGBD extends Connection
     }
 
     /*one -> bytwo*/
-    public static function select_one_where_2(string $row, string $table, string $where_row1, string $equal1, string $where_row2, string $equal2, string $data){
+    public static function select_one_where_2(string $column, string $table, string $where_row1, string $equal1, string $where_row2, string $equal2, string $data){
         if(Inspection::sql_count_by_1_row("$table", "$where_row1", "$equal1")):
-            self::setQuery(SQLselect::SELECT_1_WHERE_2("$row", "$table","$where_row1","$equal1", "$where_row2", "$equal2", consts::fetch)[0]);
+            self::setQuery(SQLselect::SELECT_1_WHERE_2("$column", "$table","$where_row1","$equal1", "$where_row2", "$equal2", consts::fetch)[0]);
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -282,10 +282,10 @@ class SGBD extends Connection
 
     #Select by a limit
     /*Select all Limit[]*/
-    public static function select_all_where_limit(string $table, string $row, string $equal_value, string $limit){
-        if(Inspection::sql_count_by_1_row("$table", "$row", "$equal_value")):
+    public static function select_all_where_limit(string $table, string $column, string $equal_value, string $limit){
+        if(Inspection::sql_count_by_1_row("$table", "$column", "$equal_value")):
             self::get_bool_state(true);
-            self::setQuery(SQLselect::SELECT_ALL_WHERE_LIMIT("$table", "$row", "$equal_value", "$limit", consts::fetch));
+            self::setQuery(SQLselect::SELECT_ALL_WHERE_LIMIT("$table", "$column", "$equal_value", "$limit", consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -299,9 +299,9 @@ class SGBD extends Connection
 
 
     #JOINs
-    public static function join_tables_2(string $table1, string $row1, string $table2, string $row2, string $row3, string $row4){
+    public static function join_tables_2(string $table1, string $column1, string $table2, string $column2, string $column3, string $column4){
         if(SQLcount::rowCount("$table1") && SQLcount::rowCount("$table2")):
-            self::setQuery(SQLjoin::JOIN_TABLES_2($table1, $row1, $table2, $row2, $row3,  $row4, consts::fetch));
+            self::setQuery(SQLjoin::JOIN_TABLES_2($table1, $column1, $table2, $column2, $column3,  $column4, consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
@@ -312,9 +312,9 @@ class SGBD extends Connection
             self::get_bool_state(false);
         endif;
     }
-    public static function join_tables_3(string $table1, string $row1, string $table2, string $row2, string $table3, string $row3, string $rowref1, string $rowref2){
+    public static function join_tables_3(string $table1, string $column1, string $table2, string $column2, string $table3, string $column3, string $columnref1, string $columnref2){
         if(SQLcount::rowCount("$table1") && SQLcount::rowCount("$table2") && SQLcount::rowCount("$table3")):
-            self::setQuery(SQLjoin::JOIN_TABLES_3($table1, $row1, $table2, $row2, $table3, $row3, $rowref1,  $rowref2, consts::fetch));
+            self::setQuery(SQLjoin::JOIN_TABLES_3($table1, $column1, $table2, $column2, $table3, $column3, $columnref1,  $columnref2, consts::fetch));
             if (self::getQuery()):
                 self::get_bool_state(true);
                 return self::getQuery();
