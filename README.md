@@ -8,14 +8,14 @@
 <a href="https://packagist.org/packages/tricioandrade/splitesql"><img src="http://poser.pugx.org/tricioandrade/splitesql/require/php" alt="PHP Version Require"></a>
 </p>
 
-<p align="center">O <a href="http://pakagist.com/packages/tricioandrade/splitesql">splitesql</a> é um query builder com métdos perparados com comandos sql quer servem de atalhos para executar queries no banco de dados.</p>
+<p align="center"><a href="http://pakagist.com/packages/tricioandrade/splitesql"><i>splitesql</i></a> is a query builder with methods prepared with sql commands that serve as shortcuts to execute queries in the database.</p>
 
-## Instalação
-Abra seu terminal e execute:
+## Installation
+Open your terminal and run:
 
 ```
 composer require tricioandrade/splitesql
 ```
 
-## Usando o query builder
+## Using <i>splitesql</i>
 
