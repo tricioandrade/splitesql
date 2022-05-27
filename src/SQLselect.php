@@ -82,40 +82,40 @@ class SQLselect extends consts
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_ALL_WHERE(string $FROM, string $WHERE, string $EQUAL, string $return){
-        self::$sql = "SELECT * FROM $FROM WHERE $WHERE = '$EQUAL'";
+    public static function SELECT_ALL_WHERE(string $table, string $WHERE, string $EQUAL, string $return){
+        self::$sql = "SELECT * FROM $table WHERE $WHERE = '$EQUAL'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         self::$stmt->execute();
 
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_ALL_WHERE_LIMIT(string $FROM, string $WHERE, string $EQUAL, string $limit, string $return){
-        self::$sql = "SELECT * FROM $FROM WHERE $WHERE = '$EQUAL' LIMIT $limit";
+    public static function SELECT_ALL_WHERE_LIMIT(string $table, string $WHERE, string $EQUAL, string $limit, string $return){
+        self::$sql = "SELECT * FROM $table WHERE $WHERE = '$EQUAL' LIMIT $limit";
 
 
         return self::spliteReturn($return);
     }
 
 
-    public static function SELECT_WHERE_LIMIT(string $ref, string $FROM, string $WHERE, string $EQUAL, string $limit, string $return){
-        self::$sql = "SELECT $ref FROM $FROM WHERE $WHERE = '$EQUAL' LIMIT $limit";
+    public static function SELECT_WHERE_LIMIT(string $column, string $table, string $WHERE, string $EQUAL, string $limit, string $return){
+        self::$sql = "SELECT $column FROM $table WHERE $WHERE = '$EQUAL' LIMIT $limit";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         self::$stmt->execute();
 
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_3_WHERE(string $ref1, string $ref2, string $ref3, string $FROM, string $WHERE, string $EQUAL, string $return){
-        self::$sql = "SELECT $ref1, $ref2, $ref3 FROM $FROM WHERE $WHERE = '$EQUAL'";
+    public static function SELECT_3_WHERE(string $referenceColumn1, string $referenceColumn2, string $referenceColumn3, string $table, string $WHERE, string $EQUAL, string $return){
+        self::$sql = "SELECT $referenceColumn1, $referenceColumn2, $referenceColumn3 FROM $table WHERE $WHERE = '$EQUAL'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         self::$stmt->execute();
 
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_2_WHERE(string $ref1, string $ref2, string $FROM, string $WHERE, string $EQUAL1, string $AND, string $EQUAL2, string $return){
-        self::$sql = "SELECT $ref1, $ref2 FROM $FROM WHERE $WHERE = '$EQUAL1' AND $AND = '$EQUAL2'";
+    public static function SELECT_2_WHERE(string $referenceColumn1, string $referenceColumn2, string $table, string $WHERE, string $EQUAL1, string $AND, string $EQUAL2, string $return){
+        self::$sql = "SELECT $referenceColumn1, $referenceColumn2 FROM $table WHERE $WHERE = '$EQUAL1' AND $AND = '$EQUAL2'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
@@ -130,15 +130,15 @@ class SQLselect extends consts
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_1_WHERE_2(string $ref1, string $FROM, string $WHERE, string $EQUAL1, string $AND, string $EQUAL2, string $return){
-        self::$sql = "SELECT $ref1 FROM $FROM WHERE $WHERE = '$EQUAL1' AND $AND = '$EQUAL2'";
+    public static function SELECT_1_WHERE_2(string $referenceColumn1, string $table, string $WHERE, string $EQUAL1, string $AND, string $EQUAL2, string $return){
+        self::$sql = "SELECT $referenceColumn1 FROM $table WHERE $WHERE = '$EQUAL1' AND $AND = '$EQUAL2'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_ALL(string $FROM, string $return){
-        self::$sql = "SELECT * FROM $FROM";
+    public static function SELECT_ALL(string $table, string $return){
+        self::$sql = "SELECT * FROM $table";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
@@ -160,28 +160,28 @@ class SQLselect extends consts
     }
 
     public static function SELECT_ALL_ORDER_ASC(string $table, string $COLUMN, string $return){
-        self::$sql = "SELECT * FROM $table ORDER BY $COLUMN ASC";
+        self::$sql = "SELECT * FROM $table ORDER BY $COLUMN";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
     }
 
     public static function SELECT_ALL_ORDER_ASC_LIMIT(string $table, string $COLUMN, int $limit, string $return){
-        self::$sql = "SELECT * FROM $table ORDER BY $COLUMN ASC LIMIT $limit";
+        self::$sql = "SELECT * FROM $table ORDER BY $COLUMN LIMIT $limit";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
     }
 
     public static function SELECT_ALL_ORDER_ASC_WHERE(string $table, $COLUMN_ref, string $equal, string $order_row, string $return){
-        self::$sql = "SELECT * FROM $table WHERE $COLUMN_ref = '$equal' ORDER BY $order_row ASC";
+        self::$sql = "SELECT * FROM $table WHERE $COLUMN_ref = '$equal' ORDER BY $order_row ";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
     }
 
-    public static function SELECT_ALL_ORDER_DESC_WHERE(string $table, string $ref, string $ref1, string $COLUMN, string $return){
-        self::$sql = "SELECT * FROM {$table} WHERE {$ref} = {$ref1} ORDER BY {$COLUMN} DESC";
+    public static function SELECT_ALL_ORDER_DESC_WHERE(string $table, string $column, string $referenceColumn1, string $COLUMN, string $return){
+        self::$sql = "SELECT * FROM {$table} WHERE {$column} = {$referenceColumn1} ORDER BY {$COLUMN} DESC";
         self::$stmt = Connection::connect()->prepare(self::$sql);
 
         return self::spliteReturn($return);
@@ -193,8 +193,8 @@ class SQLselect extends consts
 
         return self::spliteReturn($return);
     }
-    public static function SELECT(string $ref, string $FROM, string $WHERE, string $EQUAL, string $return){
-        self::$sql = "SELECT $ref FROM $FROM WHERE $WHERE = '$EQUAL'";
+    public static function SELECT(string $column, string $table, string $WHERE, string $EQUAL, string $return){
+        self::$sql = "SELECT $column FROM $table WHERE $WHERE = '$EQUAL'";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         return self::spliteReturn($return);
     }

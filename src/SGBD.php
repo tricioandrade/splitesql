@@ -43,7 +43,7 @@ class SGBD extends Connection
     }
 
     #Certification Of Anny Operation
-    public static function is_true(){
+    public static function queryState(){
         return self::$nts_value;
     }
 

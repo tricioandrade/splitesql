@@ -31,16 +31,16 @@ class  Query extends SGBD
     private static $Query;
 
     private static $queryConsts = [
-        consts::create,
-        consts::update,
-        consts::select,
-        consts::delete
+        Attributes::create,
+        Attributes::update,
+        Attributes::select,
+        Attributes::delete
     ];
     
     /**
      * @return bool
      */
-    public static function is_true(){
+    public static function queryState(): bool{
         return self::$check_query_result;
     }
 
@@ -54,7 +54,7 @@ class  Query extends SGBD
     /**
      * @return mixed
      */
-    private static function getQuery(){
+    public function getQuery(){
         return self::$Query;
     }
 
@@ -73,6 +73,7 @@ class  Query extends SGBD
     }
 
     /**
+     * @method setColumns
      * @param array $columns
      */
     private static function setColumns( $columns): void {
@@ -90,7 +91,7 @@ class  Query extends SGBD
     
     /**
      * @method setObjectToGetArray
-     * @param values 
+     * @param $values
      * Convert object to array
      */
 
@@ -100,7 +101,7 @@ class  Query extends SGBD
     }
 
     /**
-     * @return converted array
+     * @return array array
      */
     public static function getObjectConvertedToArray(){
         return self::$objectVars;
@@ -200,7 +201,7 @@ class  Query extends SGBD
      */
     public static function sql_insert($table, $param){
         self::setColumns($param); self::setValues($param);
-        self::$sql = consts::insert." into {$table} (".self::getColumns().") values (".self::getValues().")";
+        self::$sql = Attributes::insert." into {$table} (".self::getColumns().") values (".self::getValues().")";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             self::setQueryResultState(true);
@@ -233,17 +234,17 @@ class  Query extends SGBD
      * @return array|bool|int|null
      */
 
-    public static function sql_query(string $SQL, string $type_of_return = consts::fetch){
+    public static function sql_query(string $SQL, string $type_of_return = Attributes::fetch){
         self::$sql = $SQL;
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             for ($i = 0; $i < count(self::$queryConsts); $i++):
                 if(false !== stripos($SQL, self::$queryConsts[$i])) self::setQueryResultState(true);
             endfor;
-            if (false !== stripos($SQL, consts::select)):
+            if (false !== stripos($SQL, Attributes::select)):
                 switch($type_of_return):
-                    case consts::fetch: self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ)); break;
-                    case consts::count: self::setQuery(self::$stmt->rowCount()); break;
+                    case Attributes::fetch: self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ)); break;
+                    case Attributes::count: self::setQuery(self::$stmt->rowCount()); break;
                     default:
                         self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
                 endswitch;
@@ -251,8 +252,6 @@ class  Query extends SGBD
         else:
             self::setQueryResultState(false);    
         endif;
-
-        return self::getQuery();
     }
 
     /**
@@ -264,6 +263,8 @@ class  Query extends SGBD
         self::setSelectQueryValues($values);
         $where = str_replace(',', " ${in_where_condictions} ", self::getSelectQueryValues());
         $where = str_replace('"', '', $where);
-        return self::sql_query(consts::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
+        return self::sql_query(Attributes::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
     }
+
+
 }

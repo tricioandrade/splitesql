@@ -5,7 +5,7 @@ namespace Tricioandrade\Splitesql;
 use PDO;
 use PDOException;
 
-abstract class Connection extends consts
+abstract class Connection extends Attributes
 {
     /***
      * @param Connection $Proprietie
