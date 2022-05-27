@@ -1,4 +1,4 @@
-# Splitesql 
+# <p align="center">SpliteSQL (splitesql)</p>
 
 <p align="center">
 <a href="https://packagist.org/packages/tricioandrade/splitesql"><img src="http://poser.pugx.org/tricioandrade/splitesql/v" alt="Build Status"></a>
@@ -8,14 +8,14 @@
 <a href="https://packagist.org/packages/tricioandrade/splitesql"><img src="http://poser.pugx.org/tricioandrade/splitesql/require/php" alt="PHP Version Require"></a>
 </p>
 
-Por [Patricio Andrade](https://github.com/tricioandrade)
+<p align="center">O <a href="http://pakagist.com/packages/tricioandrade/splitesql">splitesql</a> é um query builder com métdos perparados com comandos sql quer servem de atalhos para executar queries no banco de dados.</p>
 
+## Instalação
+Abra seu terminal e execute:
 
-* PHP OOP
-* PDO
-* LOVE <3
-
-See you...
+```
+composer require tricioandrade/splitesql
+```
 
 ## Usando o query builder
 
