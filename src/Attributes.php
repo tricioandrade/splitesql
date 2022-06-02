@@ -15,40 +15,48 @@ abstract class Attributes
     const set       = 'SET';
     const limit     = 'LIMIT';
 
-    public $create              = 'CREATE';
-    public $update              = 'UPDATE';
-    public $delete              = 'DELETE';
-    public $select              = 'SELECT';
-    public $insert              = 'INSERT';
+    public static $symbol = '=';
+    public static $limitRows;
+    public static $row;
+    public static $or_;
+    public static $and_;
+    public static $orderBy;
 
-    public $columns             = 'COLUMNS';
+    protected $create              = 'CREATE';
+    protected $update              = 'UPDATE';
+    protected $delete              = 'DELETE';
+    protected $select              = 'SELECT';
+    protected $insert              = 'INSERT';
 
-    public $columnType          = 'COLUMN_TYPE';
-    public $columnName          = 'COLUMN_NAME';
-    public $columnComment       = 'COLUMN_COMMENT';
-    public $columnKey           = 'COLUMN_KEY';
-    public $columnDefault       = 'COLUMN_DEFAULT';
+//    protected $columns             = 'COLUMNS';
 
-    public $dataType            = 'DATA_TYPE';
+//    protected $columnType          = 'COLUMN_TYPE';
+//    protected $columnName          = 'COLUMN_NAME';
+//    protected $columnComment       = 'COLUMN_COMMENT';
+//    protected $columnKey           = 'COLUMN_KEY';
+//    protected $columnDefault       = 'COLUMN_DEFAULT';
+//
+//    protected $dataType            = 'DATA_TYPE';
+//
+//    protected $informationSchema   = 'INFORMATION_SCHEMA';
+//
+//    protected $tableSchema         = 'TABLE_SCHEMA';
+//    protected $tableName           = 'TABLE_NAME';
+//    protected $characterMLength    = 'CHARACTER_MAXIMUM_LENGTH';
+//
+//    protected $where               = 'WHERE';
+//    protected $set                 = 'SET';
+//    protected $limit               = 'LIMIT';
+//    protected $alter               = 'ALTER';
+//    protected $change              = 'CHANGE';
+//    protected $join                = 'JOIN';
+//
+//    protected $constraint          = 'CONSTRAINT';
+//    protected $references          = 'REFERENCES';
 
-    public $informationSchema   = 'INFORMATION_SCHEMA';
+    protected static $and          = 'AND';
+    protected static $or           = 'OR';
 
-    public $tableSchema         = 'TABLE_SCHEMA';
-    public $tableName           = 'TABLE_NAME';
-    public $characterMLength    = 'CHARACTER_MAXIMUM_LENGTH';
-
-    public $where               = 'WHERE';
-    public $set                 = 'SET';
-    public $limit               = 'LIMIT';
-    public $alter               = 'ALTER';
-    public $change              = 'CHANGE';
-    public $join                = 'JOIN';
-
-    public $constraint          = 'CONSTRAINT';
-    public $references          = 'REFERENCES';
-
-    public $and                 = 'AND';
-    public $or                  = 'OR';
-
+    protected static $order           = 'ORDER BY';
 
 }

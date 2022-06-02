@@ -11,7 +11,7 @@
 
 namespace Tricioandrade\Splitesql;
 
-class  Query extends SGBD
+class  Query extends Connection
 {
 
     private static $sql;
@@ -39,6 +39,15 @@ class  Query extends SGBD
         self::delete
     ];
 
+    public function __construct(string $host, string $user, string $charset, string $database, string $password)
+    {
+        self::setHost($host);
+        self::setUser($user);
+        self::setCharset($charset);
+        self::setDatabase($database);
+        self::setPassword($password);
+        self::connect();
+    }
 
     /**
      * @return bool
@@ -52,7 +61,7 @@ class  Query extends SGBD
      */
     private static function setQuery(): void {
         self::$query = new \ArrayObject();
-        self::$query->id = self::$fetch == null ? function (){
+        self::$query->id = self::$fetch !== null ? function (){
             $array = array();
             foreach (self::$fetch as $key => $item):
                 $array[$key] = $item->id;
@@ -231,6 +240,44 @@ class  Query extends SGBD
         return $array;
     }
 
+
+    /**
+     * @param $value
+     * @return string
+     */
+
+    protected static function whereCondition ($value): string{
+        return self::$row ? self::where." ".self::$row ." ".self::$symbol." {$value}" : 'id '.self::$symbol." ".$value;
+    }
+
+    /**
+     * @return string
+     */
+    protected static function or_ (): string{
+        return self::$or_ ? self::$or." ".self::$or_ : '';
+    }
+
+    /**
+     * @return string
+     */
+    protected static function and_ (): string{
+        return self::$and_ ? self::$and." ".self::$and_ : '';
+    }
+
+    /**
+     * @return string
+     */
+    protected static function limit (): string{
+        return self::$limitRows ? self::limit. ' '.self::$limitRows : '';
+    }
+
+    /**
+     * @return string
+     */
+    protected static function orderBy (): string{
+        return self::$orderBy ? self::$order. ' '.self::$orderBy : '';
+    }
+
     /**
      * @param string $table
      * @param array|object $param
@@ -238,9 +285,8 @@ class  Query extends SGBD
     public static function insert(string $table, array | object $param): void{
         self::setColumns($param);
         self::setColumnValues($param);
-        self::$sql = Attributes::insert." into {$table} (".self::getColumns().") values (".self::getColumnValues().")";
+        self::$sql = self::insert." into {$table} (".self::getColumns().") values (".self::getColumnValues().")";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-
         self::$resultState = self::$stmt->execute() ?? false;
     }
 
@@ -264,6 +310,28 @@ class  Query extends SGBD
     }
 
     /**
+     * @param string $table
+     */
+    public static function all( string $table): void{
+        self::query(self::select." * {$table}");
+    }
+
+    /**
+     * @param array|string $column
+     * @param string $table
+     * @param int|string|null $value
+     */
+    public static function where( string | array $column, string $table, int | string $value = null): void{
+        if (is_array($column)): self::setQueryColumnValues($column); $column = self::getQueryColumnValues(); endif;
+        self::query(self::select." {$column} from {$table} ".
+            self::whereCondition($value).
+            self::and_().
+            self::or_().
+            self::orderBy().
+            self::limit());
+    }
+
+    /**
      * @Model static function
      * @param string $SQL
      * @param string|null $type_of_return
@@ -271,8 +339,7 @@ class  Query extends SGBD
      */
 
     public static function query(string $sql){
-        self::$sql = $sql;
-        self::$stmt = Connection::connect()->prepare(self::$sql);
+        self::$stmt = Connection::connect()->prepare($sql);
         if (self::$stmt->execute()):
             for ($i = 0; $i < count(self::$queryConsts); $i++):
                 if(false !== stripos($sql, self::$queryConsts[$i])) self::setResultState(true);
@@ -281,7 +348,6 @@ class  Query extends SGBD
                 self::setResultState(true);
                 self::setRowCount(self::$stmt->rowCount());
                 self::setFetch(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
-
                 self::setQuery();
             endif;
         else:
@@ -290,42 +356,6 @@ class  Query extends SGBD
 
         return self::getQuery();
     }
-
-    /**
-     * 
-     * @return object|array|bool|int
-     */
-    public static function select(string $columns_to_select, string $table, object | array $columnValues, string $in_where_condictions = '', string $after_where_condictions = '')
-    {
-        self::setQueryColumnValues($columnValues);
-        $where = str_replace(',', " ${in_where_condictions} ", self::getQueryColumnValues());
-        $where = str_replace('"', '', $where);
-        return self::query(self::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
-    }
-
-    /**
-     * @method selectWhere
-     * @return void
-    */
-    public static $OptionalWhere;
-    public static $symbol = '=';
-    public static $limit;
-    public static $and;
-    public static $or;
-
-    private static $idRow;
-
-    public static function all( string $table, int $id = null): void{
-
-    }
-
-    public static function selectWhere( string | array $column, string $table, int $id = null): void{
-        if (is_array($column)): self::setQueryColumnValues($column); $column = self::getQueryColumnValues(); endif;
-        self::query(self::select." {$column} from {$table} where ". $id ? 'id' : self::$idRow ." = {$id} ". self::limit ? 'limit' );
-    }
-
-
-
 
 
 }
