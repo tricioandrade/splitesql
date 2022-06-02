@@ -228,11 +228,11 @@ class  Query extends Connection
     }
 
     /**
-     * Encode Object or Array to Json
+     * Encode string to Array, using Json
      * @param array|object $array
      * @return array
      */
-    private static function encode_json(array | object $array): array{
+    private static function encode_json(array $array): string {
         $array = str_replace('\\',' ',json_encode($array, JSON_UNESCAPED_UNICODE));
         $array = str_replace('  ', '/', $array);
         $array = str_replace(' /', '/', $array);
@@ -288,6 +288,7 @@ class  Query extends Connection
         self::$sql = self::insert." into {$table} (".self::getColumns().") values (".self::getColumnValues().")";
         self::$stmt = Connection::connect()->prepare(self::$sql);
         self::$resultState = self::$stmt->execute() ?? false;
+        self::setQuery();
     }
 
     /**
@@ -342,7 +343,9 @@ class  Query extends Connection
         self::$stmt = Connection::connect()->prepare($sql);
         if (self::$stmt->execute()):
             for ($i = 0; $i < count(self::$queryConsts); $i++):
-                if(false !== stripos($sql, self::$queryConsts[$i])) self::setResultState(true);
+                if(false !== stripos($sql, self::$queryConsts[$i]))
+                    self::setResultState(true);
+                self::setQuery();
             endfor;
             if (false !== stripos($sql, self::select)):
                 self::setResultState(true);
