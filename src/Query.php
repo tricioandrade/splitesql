@@ -18,7 +18,7 @@ class  Query extends SGBD
     private static $stmt;
 
     private static $columns;
-    private static $values;
+    private static $columValues;
 
     private static $objectVars;
     private static $array_keys;
@@ -31,12 +31,12 @@ class  Query extends SGBD
     private static $Query;
 
     private static $queryConsts = [
-        Attributes::create,
-        Attributes::update,
-        Attributes::select,
-        Attributes::delete
+        self::create,
+        self::update,
+        self::select,
+        self::delete
     ];
-    
+
     /**
      * @return bool
      */
@@ -69,35 +69,38 @@ class  Query extends SGBD
      * @return mixed
      */
     private static function getValues(){
-        return self::$values;
+        return self::$columValues;
+    }
+    
+    /**
+     * Setting array or object to get array and extract values from index's
+     * @method setObjectToGetArray
+     * @param array | object $param
+     */
+
+    public static function setObjectToGetArray(array | object $param){
+        if (is_object($param)) $param = get_object_vars($param);
+        self::$objectVars = $param;
     }
 
     /**
+     * Setting Columns from Array and create new from extracted object
      * @method setColumns
-     * @param array $columns
+     * @param array|object $columns
      */
-    private static function setColumns( $columns): void {
+    private static function setColumns(array | object $columns): void {
         self::setObjectToGetArray($columns);
         self::$columns = str_replace(['[',']', '{','}', '"' ,'"'],  '', self::encode_json(array_keys(self::getObjectConvertedToArray())));
     }
 
     /**
-     * @param array $values
+     * Setting Values from Array and create new from extracted object
+     * @method setValues
+     * @param array|object $columnValues
      */
-    private static function setValues( $values): void {
-        self::setObjectToGetArray($values);
-        self::$values = str_replace('"', '\'' , str_replace(['[',']', '{','}'],  '', self::encode_json(array_values(self::getObjectConvertedToArray()))));
-    }
-    
-    /**
-     * @method setObjectToGetArray
-     * @param $values
-     * Convert object to array
-     */
-
-    public static function setObjectToGetArray($values){
-        if (is_object($values)) $values = get_object_vars($values);
-        self::$objectVars = $values;
+    private static function setValues(array | object $columnValues ): void {
+        self::setObjectToGetArray($columnValues);
+        self::$columValues = str_replace('"', '\'' , str_replace(['[',']', '{','}'],  '', self::encode_json(array_values(self::getObjectConvertedToArray()))));
     }
 
     /**
@@ -143,8 +146,8 @@ class  Query extends SGBD
         return self::$array_values;
     }
 
-    public static function setValuesAndCleanIt($values){
-        self::$select_values = str_replace('$', '\'' , str_replace(['[',']', '\'' ,'{','}'],  '', self::encode_json(array_values($values))));
+    public static function setValuesAndCleanIt($columnValues){
+        self::$select_values = str_replace('$', '\'' , str_replace(['[',']', '\'' ,'{','}'],  '', self::encode_json(array_values($columnValues))));
     }
 
     public static function getValuesCleaned(): string{
@@ -155,9 +158,9 @@ class  Query extends SGBD
      * @method
      * @param array $select
      */
-    private static function setSelectQueryValues($values){
+    private static function setSelectQueryValues($columnValues){
             $new = array();
-            self::setObjectToGetArray($values);
+            self::setObjectToGetArray($columnValues);
             self::setArrayToGetKeys((array)self::getObjectConvertedToArray());
             self::setArrayToGetValues((array)self::getObjectConvertedToArray());
 
@@ -258,9 +261,9 @@ class  Query extends SGBD
      * 
      * @return array|bool|int
      */
-    public static function sql_select(string $columns_to_select, string $table, $values, string $in_where_condictions = '', string $after_where_condictions = '')
+    public static function sql_select(string $columns_to_select, string $table, $columnValues, string $in_where_condictions = '', string $after_where_condictions = '')
     {
-        self::setSelectQueryValues($values);
+        self::setSelectQueryValues($columnValues);
         $where = str_replace(',', " ${in_where_condictions} ", self::getSelectQueryValues());
         $where = str_replace('"', '', $where);
         return self::sql_query(Attributes::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
