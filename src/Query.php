@@ -75,7 +75,7 @@ class  Query extends Connection
     /**
      * @return mixed
      */
-    private static function getQuery(){
+    public static function getQuery(){
         return self::$query;
     }
 
