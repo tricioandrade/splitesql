@@ -5,16 +5,16 @@ namespace Tricioandrade\Splitesql;
 
 abstract class Attributes
 {
-    const count = 'count';
-    const fetch = 'fetch';
-    const create = 'CREATE';
-    const update = 'UPDATE';
-    const delete = 'DELETE';
-    const select = 'select';
-    const insert = 'insert';
-    const where = 'WHERE';
-    const set = 'SET';
-    const limit = 'LIMIT';
+    const count     = 'count';
+    const fetch     = 'fetch';
+    const create    = 'CREATE';
+    const update    = 'UPDATE';
+    const delete    = 'DELETE';
+    const select    = 'select';
+    const insert    = 'insert';
+    const where     = 'WHERE';
+    const set       = 'SET';
+    const limit     = 'LIMIT';
 
     public $create              = 'CREATE';
     public $update              = 'UPDATE';
@@ -48,8 +48,8 @@ abstract class Attributes
     public $constraint          = 'CONSTRAINT';
     public $references          = 'REFERENCES';
 
-
-    public $and                = 'AND';
+    public $and                 = 'AND';
+    public $or                  = 'OR';
 
 
 }
