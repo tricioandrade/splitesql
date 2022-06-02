@@ -26,9 +26,11 @@ class  Query extends SGBD
     private static $select_values;
     private static $array_to_filter;
     private static $select_data_for_query;
-    private static $check_query_result = false;
+    private static $resultState = false;
 
-    private static $Query;
+    private static $query;
+    private static $fetch;
+    private static $rowCount;
 
     private static $queryConsts = [
         self::create,
@@ -37,25 +39,50 @@ class  Query extends SGBD
         self::delete
     ];
 
+
     /**
      * @return bool
      */
     public static function queryState(): bool{
-        return self::$check_query_result;
+        return self::$resultState;
     }
 
     /**
      * @param mixed $Query
      */
-    private static function setQuery($Query): void {
-        self::$Query = $Query;
+    private static function setQuery(): void {
+        self::$query = new \ArrayObject();
+        self::$query->id = self::$fetch == null ? function (){
+            $array = array();
+            foreach (self::$fetch as $key => $item):
+                $array[$key] = $item->id;
+                     endforeach;
+                        return $array;
+                                    } : null ;
+        self::$query->get = self::$fetch ?? null;
+        self::$query->count = self::$rowCount ?? null;
+        self::$query->queryState = self::$resultState;
     }
-
     /**
      * @return mixed
      */
-    public function getQuery(){
-        return self::$Query;
+    private static function getQuery(){
+        return self::$query;
+    }
+
+    /**
+     * @param mixed $fetch
+     */
+    public static function setFetch($fetch): void
+    {
+        self::$fetch = $fetch;
+    }
+
+    /**
+     * @param mixed $rowCount
+     */
+    private static function setRowCount($rowCount): void{
+        self::$rowCount = $rowCount;
     }
 
     /**
@@ -68,7 +95,7 @@ class  Query extends SGBD
     /**
      * @return mixed
      */
-    private static function getValues(){
+    private static function getColumnValues(){
         return self::$columValues;
     }
     
@@ -85,6 +112,7 @@ class  Query extends SGBD
 
     /**
      * Setting Columns from Array and create new from extracted object
+     * using json_encode() to "stringfy" and clean invalid chars
      * @method setColumns
      * @param array|object $columns
      */
@@ -95,10 +123,11 @@ class  Query extends SGBD
 
     /**
      * Setting Values from Array and create new from extracted object
+     * using json_encode() to "stringfy" and clean invalid chars
      * @method setValues
      * @param array|object $columnValues
      */
-    private static function setValues(array | object $columnValues ): void {
+    private static function setColumnValues(array | object $columnValues ): void {
         self::setObjectToGetArray($columnValues);
         self::$columValues = str_replace('"', '\'' , str_replace(['[',']', '{','}'],  '', self::encode_json(array_values(self::getObjectConvertedToArray()))));
     }
@@ -121,7 +150,7 @@ class  Query extends SGBD
     }
     
     /**
-     * @method
+     * @method getArrayKeys
      * @return array
      */
     public static function getArrayKeys(): array{
@@ -139,8 +168,8 @@ class  Query extends SGBD
     }
     
     /**
-     * @method
-     * @return array self::array_values
+     * @method getArrayValues
+     * @return array
      */
     private static function getArrayValues(){
         return self::$array_values;
@@ -155,10 +184,10 @@ class  Query extends SGBD
     }
 
     /**
-     * @method
-     * @param array $select
+     * @method setSelectQueryValues
+     * @param array $columnValues
      */
-    private static function setSelectQueryValues($columnValues){
+    private static function setQueryColumnValues($columnValues){
             $new = array();
             self::setObjectToGetArray($columnValues);
             self::setArrayToGetKeys((array)self::getObjectConvertedToArray());
@@ -176,39 +205,43 @@ class  Query extends SGBD
      * @param 
      * @return string
      */
-    private static function getSelectQueryValues():string {
+    private static function getQueryColumnValues():string {
         return self::$select_data_for_query;
     }
 
     /**
+     * Setting the query result state
+     * @method setResultState
      * @param bool $state
      */
-    private static function setQueryResultState(bool $state){
-        self::$check_query_result = $state;
+    private static function setResultState(bool $state){
+        self::$resultState = $state;
     }
 
-    /*
-     * @encode array to Json
-     * @return json array
+    /**
+     * Encode Object or Array to Json
+     * @param array|object $array
+     * @return array
      */
-    private static function encode_json(array $array){
+    private static function encode_json(array | object $array): array{
         $array = str_replace('\\',' ',json_encode($array, JSON_UNESCAPED_UNICODE));
         $array = str_replace('  ', '/', $array);
         $array = str_replace(' /', '/', $array);
+
         return $array;
     }
 
     /**
-     * @param $table
-     * @param $param
+     * @param string $table
+     * @param array|object $param
      */
-    public static function sql_insert($table, $param){
-        self::setColumns($param); self::setValues($param);
-        self::$sql = Attributes::insert." into {$table} (".self::getColumns().") values (".self::getValues().")";
+    public static function insert(string $table, array | object $param): void{
+        self::setColumns($param);
+        self::setColumnValues($param);
+        self::$sql = Attributes::insert." into {$table} (".self::getColumns().") values (".self::getColumnValues().")";
         self::$stmt = Connection::connect()->prepare(self::$sql);
-        if (self::$stmt->execute()):
-            self::setQueryResultState(true);
-        endif;
+
+        self::$resultState = self::$stmt->execute() ?? false;
     }
 
     /**
@@ -234,40 +267,65 @@ class  Query extends SGBD
      * @Model static function
      * @param string $SQL
      * @param string|null $type_of_return
-     * @return array|bool|int|null
+     * @return \Closure
      */
 
-    public static function sql_query(string $SQL, string $type_of_return = Attributes::fetch){
-        self::$sql = $SQL;
+    public static function query(string $sql){
+        self::$sql = $sql;
         self::$stmt = Connection::connect()->prepare(self::$sql);
         if (self::$stmt->execute()):
             for ($i = 0; $i < count(self::$queryConsts); $i++):
-                if(false !== stripos($SQL, self::$queryConsts[$i])) self::setQueryResultState(true);
+                if(false !== stripos($sql, self::$queryConsts[$i])) self::setResultState(true);
             endfor;
-            if (false !== stripos($SQL, Attributes::select)):
-                switch($type_of_return):
-                    case Attributes::fetch: self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ)); break;
-                    case Attributes::count: self::setQuery(self::$stmt->rowCount()); break;
-                    default:
-                        self::setQuery(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
-                endswitch;
+            if (false !== stripos($sql, self::select)):
+                self::setResultState(true);
+                self::setRowCount(self::$stmt->rowCount());
+                self::setFetch(self::$stmt->fetchAll(\PDO::FETCH_OBJ));
+
+                self::setQuery();
             endif;
         else:
-            self::setQueryResultState(false);    
+            self::setResultState(false);
         endif;
+
+        return self::getQuery();
     }
 
     /**
      * 
-     * @return array|bool|int
+     * @return object|array|bool|int
      */
-    public static function sql_select(string $columns_to_select, string $table, $columnValues, string $in_where_condictions = '', string $after_where_condictions = '')
+    public static function select(string $columns_to_select, string $table, object | array $columnValues, string $in_where_condictions = '', string $after_where_condictions = '')
     {
-        self::setSelectQueryValues($columnValues);
-        $where = str_replace(',', " ${in_where_condictions} ", self::getSelectQueryValues());
+        self::setQueryColumnValues($columnValues);
+        $where = str_replace(',', " ${in_where_condictions} ", self::getQueryColumnValues());
         $where = str_replace('"', '', $where);
-        return self::sql_query(Attributes::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
+        return self::query(self::select." ${$columns_to_select} from `${table}` where ${where} ${after_where_condictions};");
     }
+
+    /**
+     * @method selectWhere
+     * @return void
+    */
+    public static $OptionalWhere;
+    public static $symbol = '=';
+    public static $limit;
+    public static $and;
+    public static $or;
+
+    private static $idRow;
+
+    public static function all( string $table, int $id = null): void{
+
+    }
+
+    public static function selectWhere( string | array $column, string $table, int $id = null): void{
+        if (is_array($column)): self::setQueryColumnValues($column); $column = self::getQueryColumnValues(); endif;
+        self::query(self::select." {$column} from {$table} where ". $id ? 'id' : self::$idRow ." = {$id} ". self::limit ? 'limit' );
+    }
+
+
+
 
 
 }

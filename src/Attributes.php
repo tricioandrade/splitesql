@@ -5,7 +5,6 @@ namespace Tricioandrade\Splitesql;
 
 abstract class Attributes
 {
-    const count     = 'count';
     const fetch     = 'fetch';
     const create    = 'CREATE';
     const update    = 'UPDATE';
@@ -31,7 +30,7 @@ abstract class Attributes
     public $columnDefault       = 'COLUMN_DEFAULT';
 
     public $dataType            = 'DATA_TYPE';
-    
+
     public $informationSchema   = 'INFORMATION_SCHEMA';
 
     public $tableSchema         = 'TABLE_SCHEMA';
