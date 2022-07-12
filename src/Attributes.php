@@ -15,12 +15,12 @@ abstract class Attributes
     const set       = 'SET';
     const limit     = 'LIMIT';
 
-    public static $symbol = '=';
-    public static $limitRows;
-    public static $row;
-    public static $or_;
-    public static $and_;
-    public static $orderBy;
+    public  $symbol = '=';
+    public  $limitRows;
+    public  $row;
+    public  $or_;
+    public  $and_;
+    public  $orderBy;
 
     protected $create              = 'CREATE';
     protected $update              = 'UPDATE';
@@ -54,9 +54,9 @@ abstract class Attributes
 //    protected $constraint          = 'CONSTRAINT';
 //    protected $references          = 'REFERENCES';
 
-    protected static $and          = 'AND';
-    protected static $or           = 'OR';
+    protected  $and          = 'AND';
+    protected  $or           = 'OR';
 
-    protected static $order           = 'ORDER BY';
+    protected  $order           = 'ORDER BY';
 
 }
